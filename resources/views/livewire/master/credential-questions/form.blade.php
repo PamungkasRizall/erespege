@@ -1,0 +1,65 @@
+<x-partials.modal
+    class="max-w-4xl"
+    :head-name="($model_id ? 'Edit' : 'Tambah') . ' ' . Str::singular($meta_title)"
+>
+    <div class="flex flex-col overflow-y-auto px-4 py-4 sm:px-5">
+            <div class="mt-4 space-y-4">
+
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <x-forms.select-box
+                        wire:model.live="profession_id"
+                        :options="$professions"
+                        title="Profesi"
+                        required />
+
+                    <x-forms.select-box
+                        wire:model="functional_position_id"
+                        :options="$functionalPositions"
+                        title="Kompetensi"
+                        required />
+                </div>
+
+                <x-forms.textarea
+                    wire:model="name"
+                    title="Pertanyaan"
+                    rows="2"
+                    required />
+
+                <div class="my-3 flex items-center space-x-3">
+                    <div class="h-px flex-1 bg-slate-200 dark:bg-navy-500"></div>
+                    <h2 class="font-medium tracking-wide text-slate-700 dark:text-navy-100">Pilihan Jawaban</h2>
+                    <div class="h-px flex-1 bg-slate-200 dark:bg-navy-500"></div>
+                </div>
+
+                @for ($i = 0; $i <= \App\Models\Choice::NUMBER_OF_CHOICES_PER_QUESTION; $i++)
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-12">
+                    @php
+                        $no = $i + 1;
+                    @endphp
+                    <x-forms.input
+                        wire:model="choices.{{ $i }}.name"
+                        title="Jawaban {{ $no }}."
+                        labelClass="sm:col-span-10"
+                        required />
+
+                    <x-forms.input
+                        wire:model="choices.{{ $i }}.score"
+                        title="Nilai {{ $no }}."
+                        class="text-right"
+                        labelClass="sm:col-span-2"
+                        x-data
+                        x-init="new Cleave($el, { numeral: true, delimiter: '' })"
+                        required />
+
+                </div>
+                @endfor
+
+                @error('choices')
+                    <div class="text-center text-tiny+ text-error">{{ $message }}</div>
+                @enderror
+
+                <x-forms.button-submit/>
+            </div>
+        </form>
+    </div>
+</x-partials.modal>
